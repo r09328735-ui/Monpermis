@@ -13,10 +13,10 @@ import { createApiClient } from './apiClient.js';
  *   reload: () => void
  * }}
  */
-export function useDossierData({ offreId, userId, apiBaseUrl, authToken, fetchImpl }) {
+export function useDossierData({ offreId, userId, apiBaseUrl, authToken }) {
   const api = useMemo(
-    () => createApiClient({ baseUrl: apiBaseUrl, authToken, fetchImpl }),
-    [apiBaseUrl, authToken, fetchImpl]
+    () => createApiClient({ baseUrl: apiBaseUrl, authToken }),
+    [apiBaseUrl, authToken]
   );
 
   const [state, setState] = useState({ loading: true, errors: [], data: null });

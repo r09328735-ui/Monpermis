@@ -8,16 +8,12 @@ import { ENDPOINTS } from './endpoints.js';
  *                                         Vide = même origine que l'app (proxy Vite/Nginx).
  * @param {string}   [options.authToken]   Token JWT géré par votre app ; envoyé en
  *                                         header `Authorization: Bearer <token>`.
- * @param {function} [options.fetchImpl]   Implémentation de fetch injectable
- *                                         (utilisée par la démo pour mocker l'API).
  */
-export function createApiClient({ baseUrl = '', authToken, fetchImpl } = {}) {
-  const doFetch = fetchImpl || ((...args) => fetch(...args));
-
+export function createApiClient({ baseUrl = '', authToken } = {}) {
   async function get(path, label) {
     let response;
     try {
-      response = await doFetch(baseUrl + path, {
+      response = await fetch(baseUrl + path, {
         method: 'GET',
         headers: {
           Accept: 'application/json',

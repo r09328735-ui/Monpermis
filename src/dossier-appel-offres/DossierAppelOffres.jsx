@@ -18,17 +18,15 @@ import './dossier-appel-offres.css';
  *  @param {string}   userId      Identifiant de l'utilisateur/abonné (obligatoire)
  *  @param {string}   [authToken] Token JWT géré par votre app (header Authorization)
  *  @param {string}   [apiBaseUrl] Préfixe des routes API (défaut : même origine)
- *  @param {function} [fetchImpl] Fetch injectable — utilisé par la démo pour mocker
  * ============================================================================
  */
-export function DossierAppelOffres({ offreId, userId, authToken, apiBaseUrl, fetchImpl }) {
+export function DossierAppelOffres({ offreId, userId, authToken, apiBaseUrl }) {
   // 1) Récupération automatique des trois ressources (parallèle).
   const { loading, errors, data, reload } = useDossierData({
     offreId,
     userId,
     apiBaseUrl,
     authToken,
-    fetchImpl,
   });
 
   // 2) Compléments saisis par l'utilisateur, UNIQUEMENT pour les pièces
