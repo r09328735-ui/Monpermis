@@ -21,10 +21,16 @@ import {
  * communiquée » (constante INFO_ABSENTE).
  */
 
-const BLEU = '#1f3a5f';
-const GRIS = '#555555';
-const GRIS_CLAIR = '#e5e7eb';
-const GRIS_ABSENT = '#9ca3af';
+// Dossier final imprimé en NOIR ET BLANC uniquement : aucune couleur.
+// Toutes les constantes pointent vers le noir ; la différenciation (titres,
+// statuts, valeurs absentes, alertes) se fait par la graisse, l'italique et
+// les bordures, jamais par la couleur.
+const NOIR = '#000000';
+const BLANC = '#ffffff';
+const BLEU = NOIR;
+const GRIS = NOIR;
+const GRIS_CLAIR = NOIR;
+const GRIS_ABSENT = NOIR;
 
 const s = StyleSheet.create({
   page: {
@@ -33,7 +39,7 @@ const s = StyleSheet.create({
     paddingHorizontal: 56, // ~2 cm
     fontFamily: 'Helvetica',
     fontSize: 10.5,
-    color: '#1a1a1a',
+    color: NOIR,
     lineHeight: 1.45,
   },
   // ---- En-tête / pied de page répétés ----
@@ -69,7 +75,7 @@ const s = StyleSheet.create({
   chapeau: { fontSize: 10, color: GRIS, marginBottom: 12, fontFamily: 'Helvetica-Oblique' },
   paragraphe: { marginBottom: 8, textAlign: 'justify' },
   // ---- Page de garde ----
-  gardePage: { padding: 56, fontFamily: 'Helvetica', color: '#1a1a1a', justifyContent: 'space-between' },
+  gardePage: { padding: 56, fontFamily: 'Helvetica', color: NOIR, justifyContent: 'space-between' },
   gardeCadre: { borderWidth: 1.5, borderColor: BLEU, padding: 32, marginTop: 80 },
   gardeAutorite: { fontSize: 11, color: GRIS, textAlign: 'center', marginBottom: 24 },
   gardeTitreDossier: { fontSize: 13, color: BLEU, textAlign: 'center', letterSpacing: 2, marginBottom: 18, fontFamily: 'Helvetica-Bold' },
@@ -80,9 +86,11 @@ const s = StyleSheet.create({
   ligne: { flexDirection: 'row', borderBottomWidth: 0.5, borderBottomColor: GRIS_CLAIR, paddingVertical: 5 },
   ligneEntete: {
     flexDirection: 'row',
-    backgroundColor: '#f3f4f6',
+    backgroundColor: BLANC,
+    borderTopWidth: 1,
+    borderTopColor: NOIR,
     borderBottomWidth: 1,
-    borderBottomColor: BLEU,
+    borderBottomColor: NOIR,
     paddingVertical: 5,
     fontFamily: 'Helvetica-Bold',
     fontSize: 9,
@@ -97,18 +105,18 @@ const s = StyleSheet.create({
   valeurAbsente: { color: GRIS_ABSENT, fontFamily: 'Helvetica-Oblique' },
   badge: { fontSize: 9, fontFamily: 'Helvetica-Bold' },
   commentaire: { fontSize: 8.5, color: GRIS, marginTop: 1 },
-  // ---- Encadré pièces manquantes ----
+  // ---- Encadré pièces manquantes (bordure noire, sans fond coloré) ----
   alerte: {
-    backgroundColor: '#fff7ed',
-    borderWidth: 1,
-    borderColor: '#f59e0b',
+    backgroundColor: BLANC,
+    borderWidth: 1.5,
+    borderColor: NOIR,
     padding: 12,
     marginBottom: 12,
   },
   encadreInfo: {
-    backgroundColor: '#f8fafc',
+    backgroundColor: BLANC,
     borderLeftWidth: 3,
-    borderLeftColor: BLEU,
+    borderLeftColor: NOIR,
     padding: 10,
     marginBottom: 10,
   },
@@ -133,10 +141,18 @@ function EnteteEtPied({ dossier }) {
   );
 }
 
-/** Badge texte coloré selon le statut d'une pièce. */
+/**
+ * Statut d'une pièce, en NOIR uniquement (pas de couleur). Les pièces « à
+ * obtenir » — les seules qui appellent une action — sont soulignées pour
+ * ressortir sans recourir à la couleur.
+ */
 function Statut({ code }) {
   const statut = STATUTS[code] || STATUTS.non_statuee;
-  return <Text style={[s.badge, { color: statut.couleur }]}>{statut.label}</Text>;
+  return (
+    <Text style={[s.badge, code === 'a_obtenir' ? { textDecoration: 'underline' } : null]}>
+      {statut.label}
+    </Text>
+  );
 }
 
 /** Tableau des pièces d'une section. */
@@ -353,9 +369,7 @@ export function DossierPDF({ dossier }) {
       {piecesManquantes.length > 0 && (
         <Page size="A4" style={s.page}>
           <EnteteEtPied dossier={dossier} />
-          <Text style={[s.h1, { color: '#b45309' }]}>
-            {++numeroSection}. Pièces manquantes — à obtenir
-          </Text>
+          <Text style={s.h1}>{++numeroSection}. Pièces manquantes — à obtenir</Text>
           <View style={s.alerte}>
             <Text style={{ fontFamily: 'Helvetica-Bold', marginBottom: 4 }}>
               Attention : {piecesManquantes.length} pièce
@@ -394,12 +408,8 @@ export function DossierPDF({ dossier }) {
           <View key={r.categorie} style={s.ligne}>
             <Text style={{ width: '40%', paddingHorizontal: 4 }}>{r.categorie}</Text>
             <Text style={{ width: '20%', paddingHorizontal: 4 }}>{r.total}</Text>
-            <Text style={{ width: '20%', paddingHorizontal: 4, color: STATUTS.disponible.couleur }}>
-              {r.disponibles}
-            </Text>
-            <Text style={{ width: '20%', paddingHorizontal: 4, color: STATUTS.a_obtenir.couleur }}>
-              {r.aObtenir}
-            </Text>
+            <Text style={{ width: '20%', paddingHorizontal: 4 }}>{r.disponibles}</Text>
+            <Text style={{ width: '20%', paddingHorizontal: 4 }}>{r.aObtenir}</Text>
           </View>
         ))}
 
